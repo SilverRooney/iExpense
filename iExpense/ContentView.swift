@@ -9,6 +9,23 @@
 import SwiftUI
 
 
+struct style: ViewModifier {
+    var amount: Double
+    
+    func body(content: Content) -> some View {
+        if amount < 10 {
+            return content.foregroundColor(.purple)
+        } else if amount < 100 {
+            return content.foregroundColor(.green)
+        } else {
+            return content.foregroundColor(.blue)
+        }
+    }
+}
+
+
+
+
 struct ContentView: View {
     @StateObject var expenses = Expenses()
     @State private var showingAddExpense = false
@@ -21,12 +38,17 @@ struct ContentView: View {
                         VStack(alignment: .leading) {
                             Text(item.name)
                                 .font(.headline)
+                                .modifier(style(amount: item.amount))
+
                             Text(item.type)
+                                .modifier(style(amount: item.amount))
+
                         }
                         
                         Spacer()
                         
-                        Text(item.amount, format: .currency(code: "USD"))
+                        Text(item.amount, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                            .modifier(style(amount: item.amount))
                     }
                 }
                 .onDelete(perform: removeItems)
@@ -54,5 +76,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environment(\.colorScheme, .dark)
     }
 }
